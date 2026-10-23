@@ -84,5 +84,29 @@ jobs:
           cd /tmp
           /tmp/gitops-wheel-env/bin/bambu-gitops validate "$GITHUB_WORKSPACE/fixtures/example"
           /tmp/gitops-wheel-env/bin/python -c 'from bambu_gitops.conformance import SCHEMA_DIR; assert (SCHEMA_DIR / "config-v0.1.schema.json").is_file()'
+      - name: Test installed-wheel archive auditor on fictional ZIP
+        run: |
+          /tmp/gitops-wheel-env/bin/python - <<'PY'
+          import json
+          import zipfile
+          from pathlib import Path
+          dst = Path("/tmp/fictional-preset-do-not-print.zip")
+          with zipfile.ZipFile(dst, "w") as bundle:
+              bundle.writestr("DO_NOT_PRINT.json", json.dumps({
+                  "name": "SYNTHETIC-ONLY DO NOT PRINT",
+                  "inherits": "FICTIONAL",
+                  "filament_flow_ratio": ["0", "nil"],
+                  "machine_start_gcode": "DO NOT PRINT\\n"
+              }))
+          PY
+          /tmp/gitops-wheel-env/bin/bambu-gitops archive-audit --kind filament /tmp/fictional-preset-do-not-print.zip > /tmp/archive-result.json
+          /tmp/gitops-wheel-env/bin/python - <<'PY'
+          import json
+          with open("/tmp/archive-result.json", encoding="utf-8") as stream:
+              result = json.load(stream)
+          assert result["ok"]
+          assert result["counts"]["roundtrip_verified"] == 1
+          assert "SYNTHETIC" not in json.dumps(result)
+          PY
       - name: Safety warning
         run: echo "::warning::Do not run any physical printer using synthetic fixture settings."
