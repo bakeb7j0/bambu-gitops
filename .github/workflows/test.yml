@@ -63,3 +63,26 @@ jobs:
         run: python -m unittest discover -s _reference_example/tests -p 'test_*.py' -v
       - name: Make warning impossible to mistake for printer validation
         run: echo "::warning::DO NOT RUN YOUR PRINTER ON THESE SETTINGS. The reference consumer is synthetic software test data only."
+
+  package-install-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build an actual wheel, not an editable checkout
+        run: |
+          python -m pip install build
+          python -m build --wheel
+      - name: Install wheel into clean environment
+        run: |
+          python -m venv /tmp/gitops-wheel-env
+          /tmp/gitops-wheel-env/bin/python -m pip install dist/*.whl
+      - name: Validate synthetic reference with installed package from outside checkout
+        run: |
+          cd /tmp
+          /tmp/gitops-wheel-env/bin/bambu-gitops validate "$GITHUB_WORKSPACE/fixtures/example"
+          /tmp/gitops-wheel-env/bin/python -c 'from bambu_gitops.conformance import SCHEMA_DIR; assert (SCHEMA_DIR / "config-v0.1.schema.json").is_file()'
+      - name: Safety warning
+        run: echo "::warning::Do not run any physical printer using synthetic fixture settings."
