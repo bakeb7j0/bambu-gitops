@@ -50,11 +50,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: bakeb7j0/bambu-gitops-example
-          ref: 7f016ead6568bfdddb19f75f904ea156aadbb434
+          ref: 32d00ccbca33a61a4b66e7a4a1bfa3c6e19c6b86
           path: _reference_example
           persist-credentials: false
       - name: Confirm immutable reference revision
-        run: test "$(git -C _reference_example rev-parse HEAD)" = "7f016ead6568bfdddb19f75f904ea156aadbb434"
+        run: test "$(git -C _reference_example rev-parse HEAD)" = "32d00ccbca33a61a4b66e7a4a1bfa3c6e19c6b86"
       - name: Ensure example cannot masquerade as printer settings
         run: python _reference_example/tests/check_synthetic.py
       - name: Cross-repository read-only conformance
