@@ -1,5 +1,9 @@
 # bambu-gitops
 
+> [!CAUTION]
+> **🛑 DON'T RUN YOUR PRINTER ON THE EXAMPLE SETTINGS.**
+> The [public example configuration](https://github.com/bakeb7j0/bambu-gitops-example) and this repository's test fixtures are **synthetic software-test data**, not calibrated printer recipes. **Do not import, deploy or copy them into Bambu Studio or hardware.** Passing CI proves software checks passed—not that your printer is safe. Your hotend doesn't support `git revert`.
+
 Public **MIT-licensed**, read-only GitOps-oriented tooling for Bambu Studio configuration management.
 
 The engine is generic. It contains **no R2-3D-specific data, private printer configurations, actual spool inventory, device credentials, or account information**.
