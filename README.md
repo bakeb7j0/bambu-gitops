@@ -35,4 +35,4 @@ See [engine roadmap](docs/roadmap.md) and [schema contract](schemas/README.md).
 
 ## License
 
-No open-source license has been selected yet. Public visibility alone **does not grant reuse/distribution rights**. A license will be chosen explicitly before advertising this project as a reusable third-party tool.
+MIT, as specified by the repository's [LICENSE](LICENSE). Contributions must contain no private printer/account configuration or unsanitized exports.
