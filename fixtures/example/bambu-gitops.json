@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1",
+  "instance": {
+    "id": "example-p1s",
+    "display_name": "Example P1S (synthetic)"
+  },
+  "hardware": {
+    "printer_model": "Bambu Lab P1S",
+    "hotend": "Example generic hotend",
+    "nozzle": {
+      "diameter_mm": 0.4,
+      "material": "hardened steel"
+    },
+    "capabilities": {
+      "validated_mvs_mm3_s": 16,
+      "max_nozzle_temperature_c": 280
+    }
+  },
+  "profiles": {
+    "printer": [
+      "example-printer"
+    ],
+    "process": [
+      "example-process"
+    ],
+    "filament": [
+      "pla-basic"
+    ]
+  },
+  "calibrations": [
+    {
+      "filament_id": "pla-basic",
+      "nozzle_mm": 0.4,
+      "kind": "pressure_advance_k",
+      "value": 0.02,
+      "status": "measured",
+      "notes": "Synthetic example, not a real measurement"
+    }
+  ]
+}
