@@ -1,4 +1,4 @@
-name: Test engine
+name: Contract and Conformance
 on:
   push:
   pull_request:
@@ -7,9 +7,31 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
     steps:
       - uses: actions/checkout@v4
-      - name: Verify generic resolver
-        run: python3 -m unittest discover -s tests -v
-      - name: Compile tools
-        run: python3 -m compileall -q tools
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install engine and test dependencies
+        run: python -m pip install -e '.[test]'
+      - name: Run inheritance and conformance tests
+        run: python -m pytest -q
+      - name: Validate synthetic example
+        run: bambu-gitops validate fixtures/example | python -m json.tool
+      - name: Verify golden conformance report
+        run: |
+          bambu-gitops validate fixtures/example > /tmp/report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          got = json.loads(Path("/tmp/report.json").read_text())
+          expected = json.loads(Path("tests/golden/valid-report.json").read_text())
+          assert got == expected, f"Unexpected conformance drift: {got!r}"
+          PY
+      - name: Compile tools and engine
+        run: python -m compileall -q tools src
