@@ -17,3 +17,6 @@ bambu-gitops = "bambu_gitops.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+bambu_gitops = ["schemas/*.json"]
