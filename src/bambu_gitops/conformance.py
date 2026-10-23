@@ -7,7 +7,7 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schemas"
+SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
 KINDS = ("printer", "process", "filament")
 SENSITIVE = {"machine_start_gcode", "machine_end_gcode", "change_filament_gcode",
              "bed_exclude_area", "nozzle_diameter", "nozzle_type", "printable_area",
