@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/bakeb7j0/bambu-gitops/blob/main/schemas/config-v0.1.schema.json",
+  "title": "Bambu GitOps Instance Configuration 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "instance",
+    "hardware",
+    "profiles"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "instance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "display_name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "printer_model",
+        "hotend",
+        "nozzle"
+      ],
+      "properties": {
+        "printer_model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hotend": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nozzle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "diameter_mm",
+            "material"
+          ],
+          "properties": {
+            "diameter_mm": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 2
+            },
+            "material": {
+              "type": "string",
+              "minLength": 1
+            },
+            "manufacturer": {
+              "type": "string"
+            }
+          }
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "validated_mvs_mm3_s": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max_nozzle_temperature_c": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        }
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "filament",
+        "process",
+        "printer"
+      ],
+      "properties": {
+        "filament": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "process": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "printer": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "calibrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "filament_id",
+          "nozzle_mm",
+          "kind",
+          "status",
+          "value"
+        ],
+        "properties": {
+          "filament_id": {
+            "$ref": "#/$defs/id"
+          },
+          "nozzle_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "kind": {
+            "enum": [
+              "flow_ratio",
+              "pressure_advance_k"
+            ]
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0
+          },
+          "status": {
+            "enum": [
+              "measured",
+              "saved",
+              "assigned",
+              "verified_applied"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,63}$"
+    }
+  }
+}
