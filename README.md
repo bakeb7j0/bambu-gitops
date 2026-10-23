@@ -29,6 +29,19 @@ The CLI prints machine-readable JSON findings and returns a nonzero exit status 
 
 Current [conformance documentation](docs/conformance.md) explains the contract and its limitations.
 
+## Bambu Studio export compatibility (read-only)
+
+The new [archive compatibility auditor](docs/archive-compatibility.md) checks ZIP, TAR and TGZ exports for JSON semantic round-trip fidelity. It preserves data values including per-variant `nil` entries and multi-line G-code **during in-memory serialization**, and emits aggregate statistics only.
+
+```bash
+bambu-gitops archive-audit --kind filament "/path/to/Filament presets.zip"
+bambu-gitops archive-audit --kind process "/path/to/Process presets.zip"
+bambu-gitops archive-audit --kind printer "/path/to/Printer presets.zip"
+bambu-gitops archive-audit --kind system "/path/to/bs-system.tgz"
+```
+
+**This is not a verified Bambu Studio import/export round trip.** Actual slicer acceptance and equivalent effective behavior remain separate future acceptance tests; there is no apply feature.
+
 ## Legacy snapshot investigation tools
 
 ```bash
