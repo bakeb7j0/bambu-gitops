@@ -35,3 +35,31 @@ jobs:
           PY
       - name: Compile tools and engine
         run: python -m compileall -q tools src
+
+  public-reference-consumer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitOps engine under test
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install current engine
+        run: python -m pip install -e '.[test]'
+      - name: Checkout pinned synthetic consumer
+        uses: actions/checkout@v4
+        with:
+          repository: bakeb7j0/bambu-gitops-example
+          ref: 7f016ead6568bfdddb19f75f904ea156aadbb434
+          path: _reference_example
+          persist-credentials: false
+      - name: Confirm immutable reference revision
+        run: test "$(git -C _reference_example rev-parse HEAD)" = "7f016ead6568bfdddb19f75f904ea156aadbb434"
+      - name: Ensure example cannot masquerade as printer settings
+        run: python _reference_example/tests/check_synthetic.py
+      - name: Cross-repository read-only conformance
+        run: bambu-gitops validate _reference_example
+      - name: Run public consumer's compatibility tests
+        run: python -m unittest discover -s _reference_example/tests -p 'test_*.py' -v
+      - name: Make warning impossible to mistake for printer validation
+        run: echo "::warning::DO NOT RUN YOUR PRINTER ON THESE SETTINGS. The reference consumer is synthetic software test data only."
