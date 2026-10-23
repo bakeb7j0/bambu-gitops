@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bambu GitOps Profile 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "kind",
+    "display_name",
+    "settings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,63}$"
+    },
+    "kind": {
+      "enum": [
+        "filament",
+        "process",
+        "printer"
+      ]
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "inherits": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,63}$"
+    },
+    "material": {
+      "type": "string"
+    },
+    "manufacturer": {
+      "type": "string"
+    },
+    "nozzle_diameter_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "settings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "array",
+          "object",
+          "null"
+        ]
+      }
+    },
+    "reviewed": {
+      "type": "boolean"
+    }
+  }
+}
