@@ -1,9 +1,12 @@
-"""Command line entry point for read-only conformance checks."""
+"""Command line entry point for read-only checks."""
 from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
 from .conformance import report
+from .archive_compat import audit, ArchiveError, KIND
+import tarfile
+import zipfile
 
 
 def main(argv=None):
@@ -11,8 +14,17 @@ def main(argv=None):
     sub = p.add_subparsers(dest="command", required=True)
     v = sub.add_parser("validate", help="Validate an instance config repository (read-only)")
     v.add_argument("path", type=Path)
+    a = sub.add_parser("archive-audit", help="Check JSON archive semantic round trips; never imports or modifies presets")
+    a.add_argument("--kind", choices=KIND, required=True)
+    a.add_argument("path", type=Path)
     args = p.parse_args(argv)
-    result = report(args.path)
+    if args.command == "validate":
+        result = report(args.path)
+    else:
+        try:
+            result = audit(args.path, args.kind)
+        except (OSError, tarfile.TarError, zipfile.BadZipFile, ArchiveError):
+            result = {"ok": False, "error": "Archive could not be read safely"}
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["ok"] else 1
 
