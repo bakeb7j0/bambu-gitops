@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "id": "pla-basic",
+  "kind": "filament",
+  "display_name": "PLA Basic - Example",
+  "material": "PLA",
+  "manufacturer": "Synthetic Vendor",
+  "settings": {
+    "nozzle_temperature_c": 220,
+    "flow_ratio": 0.98,
+    "max_volumetric_speed_mm3_s": 12
+  },
+  "reviewed": true
+}
