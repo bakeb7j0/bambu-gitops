@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "id": "example-process",
+  "kind": "process",
+  "display_name": "0.20 mm Standard",
+  "settings": {
+    "layer_height_mm": 0.2
+  },
+  "reviewed": true
+}
