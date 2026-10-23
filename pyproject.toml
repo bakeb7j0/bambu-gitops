@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bambu-gitops"
+version = "0.1.0.dev0"
+description = "Read-only, schema-driven configuration conformance checks for Bambu Studio"
+requires-python = ">=3.10"
+dependencies = ["jsonschema>=4.21,<5"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+bambu-gitops = "bambu_gitops.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
