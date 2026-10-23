@@ -1,38 +1,47 @@
 # bambu-gitops
 
-Reusable, **read-only initially**, GitOps-oriented tooling for Bambu Studio configurations.
+Public **MIT-licensed**, read-only GitOps-oriented tooling for Bambu Studio configuration management.
 
-## Boundaries
+The engine is generic. It contains **no R2-3D-specific data, private printer configurations, actual spool inventory, device credentials, or account information**.
 
-The engine provides generic discovery, auditing, inheritance resolution, validation, and eventual controlled export/reconciliation. It contains **no R2-3D-specific profiles or configuration**, physical spool inventories, account data, or device secrets.
+## Contract and Conformance — v0.1 (experimental)
 
-Printer-specific desired state belongs in a separate, private configuration repository.
+The first versioned desired-state contract is in [schemas/](schemas/), with synthetic fixtures and automated positive/negative tests. It models:
 
-## Current capabilities
+- Hardware identity and declared limits, with printer/process/filament profile references
+- Stable profile identity, inheritance, and explicit settings
+- Calibration evidence with **measured → saved → assigned → verified applied** state
+- Diagnostic severity: schema/reference/nozzle errors vs explicit safety-review warnings
 
-- `tools/audit.py`: local-only filament preset audit (names, parent references, potential duplicates).
-- `tools/resolve.py`: provisional inheritance resolution, including per-variant `nil` overrides.
-- `tests/`: inheritance smoke tests run in CI.
-
-### Usage (local-only snapshot inputs)
+Run locally:
 
 ```bash
-python3 tools/audit.py /path/to/filaments.tgz --json
-python3 tools/resolve.py --user /path/to/filaments.tgz --system /path/to/bs-system.tgz --output /tmp/effective.json
-python3 -m unittest discover -s tests -v
+python3 -m pip install -e '.[test]'
+python3 -m pytest -q
+bambu-gitops validate fixtures/example
 ```
 
-**Important:** This resolver is a prototype, **not** a guaranteed reproduction of Bambu Studio's `include` templates, variant/compatibility semantics, or device-side Flow Dynamics records. Do not use it to generate or apply live printer profiles.
+The CLI prints machine-readable JSON findings and returns a nonzero exit status for **errors**. Warnings are reported without claiming that anything is safe to deploy.
 
-## Safety
+Current [conformance documentation](docs/conformance.md) explains the contract and its limitations.
 
-- Never commit raw full Bambu Studio configuration directories or unreviewed source archives.
-- Never automatically change startup/end/filament-change G-code, exclusion zones, thermal limits or geometry.
-- K-factor calibration has distinct stages: measured → saved → assigned → verified applied.
-- The engine does not synchronize inventory or AMS state to Git.
+## Legacy snapshot investigation tools
 
-See [engine roadmap](docs/roadmap.md) and [schema contract](schemas/README.md).
+```bash
+python3 tools/audit.py /path/to/filament-export.tgz --json
+python3 tools/resolve.py --user /path/to/user-export.tgz --system /path/to/system-export.tgz --output /tmp/effective.json
+```
 
-## License
+These remain **read-only analytical prototypes**. Bambu Studio `include` templates, all Standard/High Flow inheritance rules, hardware-specific compatibility, and round-trip exporter semantics are not yet validated.
 
-MIT, as specified by the repository's [LICENSE](LICENSE). Contributions must contain no private printer/account configuration or unsanitized exports.
+## CI and adoption
+
+CI validates the synthetic reference instance against JSON Schema, runs negative cases, checks reviewed golden output, and exercises the test suite on Python 3.10 and 3.12.
+
+A standalone [`bambu-gitops-example` reference repository](https://github.com/bakeb7j0/bambu-gitops-example) is planned to exercise the same contract as an independent consumer. The engine will pin that example revision in its integration tests after the repository is created.
+
+**Live configuration changes are intentionally unsupported.** Device-side K-factor, AMS loading, Bambu Cloud Filament Manager and per-project slicer state are independent observed systems; no automatic Git reconciliation or write-back exists yet.
+
+## License and safety
+
+[MIT License](LICENSE). See [SECURITY.md](SECURITY.md) and [development roadmap](docs/roadmap.md).
